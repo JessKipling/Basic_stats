@@ -207,4 +207,64 @@ t.test(dat ~ sample, data = r_two, var.equal = TRUE, alternative = "greater")
 
 
 
+# Workflow Exercises ------------------------------------------------------
+
+#A t test workflow is good to do in own time
+
+#loading data
+ecklonia <- read_csv("Intro_R_Workshop_UWC2018/data/ecklonia.csv") %>% 
+  gather(key = "variable", value = "value", -species, -site, -ID)
+
+#data is converted from wide format into a long format 
+  #this is more useful for the rest of the workflow
+
+#Visualising the data
+
+ggbox1 <- ggplot(data = ecklonia, aes(x = variable, y = value, fill = site)) +
+  geom_boxplot() +
+  coord_flip()
+
+#notice that the different measurements are on different scales
+#this is making comparing the data challenging
+#however, we can still make *some* observations
+  #e.g. that the measurement values at Batsata Rock seem to be greater than at boulders
+
+#Refine our observation into a hypothesis
+  #by what measurement are the kelps greater at one site than at the other?
+
+#Stipe mass appears to be similar
+
+
+# Creating a boxplot ------------------------------------------------------
+
+# filter the data
+ecklonia_sub <- ecklonia %>% 
+  filter(variable == "stipe_mass")
+
+# then create a new figure
+ggplot(data = ecklonia_sub, aes(x = variable, y = value, fill = site)) +
+  geom_boxplot() +
+  coord_flip() +
+  labs(y = "stipe mass (kg)", x = "") +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+
+#this generates the question: are the stipe masses at Bat. greater than at Boulders?
+#comparison of two sample sets so T-test will be used
+#a one sided T-test to assess if one is greater than the other
+#does the data meet the assumptions for the test?
+  #continuous...yes
+  #independent...yes
+  #normally distributed...?
+  #Homoscedastic...?
+
+# Checking for Normal Distrib. and Homosced. ------------------------------
+
+ecklonia_sub %>% 
+  group_by(site) %>% 
+  summarise(variable.norm = as.numeric(shapiro.test(value)[2])),
+            variable_var = var(value)
+
+
+
 
