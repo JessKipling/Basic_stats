@@ -135,7 +135,6 @@ View(sa_time)
 
 #create long data
 sa_long <- sa_time %>% 
-  group_by(human) %>% 
   gather(key = "time_type", value = "minutes", -human) 
 #gather up columns depending on how they are grouped - give it names
 # key is name of column that contains our variables  
@@ -155,6 +154,7 @@ SatimeBar <- ggplot(data = sa_count,aes(x = "", y = n, fill = time_type)) +
   labs(title = "Stacked Bar Graph", subtitle = "cumulative sum",
        x = NULL, y = "Count") +
   theme_minimal()
+SatimeBar
 
 #Stacked proportion bar graph
   #a way we can represent a proportion of categories in a study
@@ -169,25 +169,25 @@ satimepie <- ggplot(data = sa_count, aes(x = "", y = n, fill = time_type)) +
        x = NULL, y = NULL) +
   coord_polar("y", start = 0) +
   theme_minimal()
-
+satimepie
 
 
 # Histogram ---------------------------------------------------------------
 
-ggplot(data = sa_clean, aes(x = minutes)) +
+# RWS: Cannot use sa_clean here as you have not yet created it
+ggplot(data = sa_long, aes(x = minutes)) +
   geom_histogram()
 #this wasnt a  good looking graph/error in dataset layout whn we used sa_long so we made sa_clean
 
 # Try again
 
-satimehist1 <- ggplot(data = sa_clean, aes(x = minutes)) +
+satimehist1 <- ggplot(data = sa_long, aes(x = minutes)) +
   geom_histogram(aes(fill = time_type), position = "dodge") +
   facet_wrap(~time_type, ncol = 1, scales = "free_x")
 
 #getting rid of one value
-
 sa_clean <- sa_long %>% 
-  filter(minutes < 10000) #filtering minutes column by anything less than 10k
+  filter(minutes < 100) #filtering minutes column by anything less than 10
 
 
 satimeHist2 <- ggplot(data = sa_clean, aes(x = minutes)) +
