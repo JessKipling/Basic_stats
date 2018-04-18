@@ -239,7 +239,7 @@ ggbox1 <- ggplot(data = ecklonia, aes(x = variable, y = value, fill = site)) +
 
 # filter the data
 ecklonia_sub <- ecklonia %>% 
-  filter(variable == "stipe_mass")
+  filter(variable == "stipe_length")
 
 # then create a new figure
 ggplot(data = ecklonia_sub, aes(x = variable, y = value, fill = site)) +
@@ -262,9 +262,6 @@ ggplot(data = ecklonia_sub, aes(x = variable, y = value, fill = site)) +
 
 ecklonia_sub %>% 
   group_by(site) %>% 
-  summarise(variable.norm = as.numeric(shapiro.test(value)[2])),
-            variable_var = var(value)
-
-
-
+  summarise(stipe_mass_var = two_assum(value)[1])
+          
 
