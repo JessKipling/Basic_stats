@@ -17,8 +17,7 @@ ggplot(data = ecklonia, aes(x = variable, y = value, fill = site)) +
 
 # filter the data
 ecklonia_sub <- ecklonia %>% 
-  filter(variable == "stipe_mass") +
-  coord_flip()
+  filter(variable == "stipe_mass")
 
 
 
