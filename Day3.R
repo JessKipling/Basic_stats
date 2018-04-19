@@ -86,7 +86,7 @@ h <- ggplot(data = r_dat, aes(x = dat, fill = sample)) +
   geom_histogram(position = "dodge", binwidth = 1, alpha = 0.8) +
   geom_density(aes(y = 1*..count.., fill = sample), colour = NA, alpha = 0.4) +
   labs(x = "value")
-\
+
 
 # Check Assumptions -------------------------------------------------------
 
@@ -258,10 +258,13 @@ ggplot(data = ecklonia_sub, aes(x = variable, y = value, fill = site)) +
   #normally distributed...?
   #Homoscedastic...?
 
-# Checking for Normal Distrib. and Homosced. ------------------------------
-
 ecklonia_sub %>% 
   group_by(site) %>% 
-  summarise(stipe_mass_var = two_assum(value)[1])
+  summarise(stipe_mass_var = two_assum(value)[1],
+            stipe_mass_norm = two_assum(value)[2])
+
+# Checking for Normal Distrib. and Homosced. ------------------------------
+
+
           
 
