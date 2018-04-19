@@ -13,7 +13,6 @@
 
 library(tidyverse)
 library(ggpubr)
-library(ggplot2)
 
 # First grab the data
 chicks <- as_tibble(ChickWeight)
@@ -65,7 +64,7 @@ ggplot(chicks_21, aes(x = Time, y = weight, fill = Diet)) +
 
 # Tukey HSD ---------------------------------------------------------------
 
-Tukey <- TukeyHSD(chicks.aov1)
+Tukey <- TukeyHSD(chicks.aov.1)
 
 #P-adj shows the significance between the various diets. 
 #diet 3-1 shows that there is a significant difference
@@ -90,7 +89,7 @@ chicks_Tukey
 
 #first way
 
-plot(TukeyHSD(chicks.aov1, "Diet"))
+plot(TukeyHSD(chicks.aov.1, "Diet"))
 
 #second way
 plot(TukeyHSD(aov(weight ~ Diet, data = chicks_21)))
@@ -112,7 +111,7 @@ ggplot(data = ChickWeight, aes(x = Time, y = weight)) +
   geom_boxplot(notch = T, aes(fill = as.factor(Time)))
 
 #With TIme only filtered
-ggplot(data = chicks_0_21, aes(x = Time, y = weight)) +
+ggplot(data = chicks_0_21, aes(x = as.factor(Time), y = weight)) +
   geom_boxplot(notch = T, aes(fill = as.factor(Time)))
 
 
@@ -197,12 +196,10 @@ wilcox.test() #and then one fills this in the same for t.test
 
 # Krushkall- Wallis test --------------------------------------------------
 
+kruskal.test(weight ~ Diet, data = chicks_0_21)
+
 library(pgirmess)
 # And now for the Kruskall-Wallis test
 
 kruskalmc(weight ~ Diet, data = chicks_0_21)
-
-
-
-
 
