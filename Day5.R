@@ -127,8 +127,107 @@ plot(snakes.tukey)
 #shows diff, lwr, upr, p values between the variables
 
 
+#after the break
+ #Visulatisation
+
+ggplot(data = snakes, aes(x = as.numeric(day),
+                          y = openings,
+                          colour = snake)) +
+  geom_line(size = 3)+
+  geom_point(size = 4)
 
 
 
+# Exercise  ---------------------------------------------------------------
+
+#make 2 null hypothesis
+#run a two factor anova with interaction between the two factors
+#ANOva
+#Tukey
+#Line Graph
+#Write a conclusion
+
+Moths <- read_csv("Moths.csv") %>% 
+  gather(key = "trap", value = "count", -Location)
+
+#levevls
+#number of moth per trap
+#used 3 different trap types: sugar, chemical, scent
+
+Moths.summary <- Moths %>% 
+  group_by(Location) %>% 
+  summarise(mean_count = mean(count),
+            sd_count = sd(count)) 
+
+Moths.summary
+         
+Moths.summary2 <- summarySE(data = Moths, measurevar = "count", groupvars = c("Location"))
+
+BoxPlot <- ggplot(data = Moths, aes(x = Location, y = count)) +
+  geom_segment(data = Moths.summary2, aes(x = Location, xend = Location, y = count - ci, yend = count + ci, colour = Location),
+               size = 2.0, linetype = "solid", show.legend = F) +
+  geom_boxplot(aes(fill = Location), alpha = 0.6, show.legend = F) + 
+  geom_jitter(width = 0.1)
+
+# Hypothesis
+
+#H0: There is no difference in number of moths caught in the various locations
+#H1: There IS a difference in number of moths caught in the various locations
+
+Moths.aov <- aov(count ~ Location, data = Moths)
+
+summary(Moths.aov)
+
+#We do not accept the null hypothesis as there is a difference in the number of moths caught in the various locations
+
+#Location and Traps
+
+#H0: There is no difference in number of moths caught in the various locations and various traps
+#H1: There IS a difference in number of moths caught in the various locations and various traps
+
+#We do not reject the null hypothesis as there is no difference in the number of moths caught in the various traps 
+  #in the various locations
+
+Moths.all.aov <- aov(count ~ Location + trap, data = Moths)
+
+summary(Moths.all.aov)
+
+# Checking assumptions...
+# make a histogram of the residuals;
+# they must be normal
+
+Moths.res <- residuals(Moths.aov)
+hist(Moths.res)
+
+# make a plot of residuals and the fitted values;
+# # they must be normal and homoscedastic
+
+plot(fitted(Moths.all.aov), residuals(Moths.all.aov))
+
+Moths.tukey <- TukeyHSD(Moths.aov, which = "Location")
+
+plot(Moths.tukey)
 
 
+BoxPlot2 <- ggplot(data = Moths, aes(x = Location, y = count)) +
+  geom_boxplot(aes(fill = trap), alpha = 0.6, show.legend = F) + 
+  geom_jitter(width = 0.1)
+
+BoxPlot3 <- ggplot(data = Moths, aes(x = trap, y = count)) +
+  geom_boxplot() + 
+  geom_jitter(width = 0.1)
+
+BoxPlot4 <- ggplot(data = Moths, aes(x = Location, y = count)) +
+  geom_boxplot() + 
+  geom_jitter(width = 0.1)
+
+library(ggplot2)
+library(ggpubr)
+
+Final.Moths <- ggarrange(BoxPlot2, BoxPlot3, BoxPlot4)
+
+
+ggplot(data = Moths, aes(x = Location)) +
+  geom_bar(aes(fill = trap,
+               position = "dodge"))
+#not really what I was aiming for
