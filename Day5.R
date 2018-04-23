@@ -344,7 +344,7 @@ head(melted_eck)
 
 ggplot(melted_eck, aes(x = Var1, y = Var2, fill = value)) +
   geom_tile() +
-  scale_fill_gradient(low = "white", high = "dodgerblue") +
+  scale_fill_gradient(low = "white", high = "red") +
   labs(x = "Variable_1", y = "Variable_2")
 
 
