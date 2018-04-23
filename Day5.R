@@ -53,10 +53,11 @@ ggplot(snakes.summary2, aes(x = day, y = mean_openings)) +
 
 # Testing a hypothesis ----------------------------------------------------
 
-library(Rmisc) #this package has a summary called SE 
+# library(Rmisc) # Unfortunately this overrides many dplyr functions 
+#this package has a summary called SE 
 
 
-snakes.summary3 <- summarySE(data = snakes, #data it operates on
+snakes.summary3 <- Rmisc::summarySE(data = snakes, #data it operates on
                              measurevar = "openings", #measurement (openings) 
                              groupvars = c("day")) #variable
 
@@ -161,7 +162,7 @@ Moths.summary <- Moths %>%
 
 Moths.summary
          
-Moths.summary2 <- summarySE(data = Moths, measurevar = "count", groupvars = c("Location"))
+Moths.summary2 <- Rmisc::summarySE(data = Moths, measurevar = "count", groupvars = c("Location"))
 
 BoxPlot <- ggplot(data = Moths, aes(x = Location, y = count)) +
   geom_segment(data = Moths.summary2, aes(x = Location, xend = Location, y = count - ci, yend = count + ci, colour = Location),
@@ -225,7 +226,7 @@ library(ggplot2)
 library(ggpubr)
 
 Final.Moths <- ggarrange(BoxPlot2, BoxPlot3, BoxPlot4)
-
+Final.Moths
 
 ggplot(data = Moths, aes(x = Location)) +
   geom_bar(aes(fill = trap,
@@ -257,7 +258,6 @@ ggplot(data = Moths, aes(x = Location)) +
 #type of correlation we are going to do
 
 library(corrplot)
-library(ggplot2)
 library(tidyverse)
 library(ggpubr)
 
