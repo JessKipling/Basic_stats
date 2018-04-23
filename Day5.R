@@ -231,3 +231,122 @@ ggplot(data = Moths, aes(x = Location)) +
   geom_bar(aes(fill = trap,
                position = "dodge"))
 #not really what I was aiming for
+
+
+
+# Missing Information on Linear Regressions -------------------------------
+
+
+
+
+
+# Correlations ------------------------------------------------------------
+
+#what is the relationship between a variable with another variable
+#not how does another variable account for the variance
+#Morphometric properties of things... ie. a correlation
+#kelp length is not independent of the weight
+#but there is a relationship that you can qunatify
+
+
+# Correlation Assumptions -------------------------------------------------
+
+#data are not indepedent
+#abscence of outliers
+#linearity 
+#type of correlation we are going to do
+
+library(corrplot)
+library(ggplot2)
+library(tidyverse)
+library(ggpubr)
+
+#Load Data
+
+ecklonia <- read.csv("Intro_R_Workshop_UWC2018/data/ecklonia.csv")
+
+
+# Formulate a hypothesis --------------------------------------------------
+
+# H0: THere is no relationship between stipe length and stipe diameter
+#for the kelp Ecklonia maxima
+#H1: there is a relationship between stipe length and stipe diameter 
+  #for the kelp Ecklonia maxima
+
+
+# #Test a Hypothesis ------------------------------------------------------
+
+
+cor.test(ecklonia$stipe_length, ecklonia$stipe_diameter)
+
+# Visualise the Data
+
+ggplot(data = ecklonia, aes(x = stipe_length, y = stipe_diameter)) +
+  geom_point()
+
+
+# Run HECKA tests at once -------------------------------------------------
+
+#we just want the continuos variables
+
+ecklonia_sub <- ecklonia %>% 
+  select(stipe_length:epiphyte_length) #creating column names
+
+ecklonia_cor <- cor(ecklonia_sub) #will give you just the pearsons cor value
+
+ecklonia_cor
+
+
+# Spearman rank test ------------------------------------------------------
+
+# ordinal data
+
+ecklonia$length <- as.numeric(cut((ecklonia$stipe_length + ecklonia$stipe_diameter), 3))
+                              
+#output is a word based 
+
+#Then run a Spearman test
+
+cor.test(ecklonia$length, ecklonia$primary_blade_length, method = "spearman")
+
+#Rho value is similar to pearson R. 
+
+
+# Kendall rank test -------------------------------------------------------
+
+ecklonia_norm <- ecklonia_sub %>% 
+  gather(key = "variable") %>% 
+  group_by(variable) %>% 
+  summarise(variable_norm = as.numeric(shapiro.test(value)[2]))
+ecklonia_norm
+
+cor.test(ecklonia$stipe_length, ecklonia$stipe_diameter, method = "kendall")
+
+#tau 
+
+
+# Visualise the results ------------------------------------------------------
+library(corrplot)
+ecklonia_pearson <- cor(ecklonia_sub)
+
+corrplot(ecklonia_pearson, method = "circle")
+
+summary(ecklonia_pearson)
+
+# Homework Exercise -------------------------------------------------------
+
+#Heat map
+
+library(reshape2)
+
+melted_eck <- melt(ecklonia_pearson)
+head(melted_eck)
+
+ggplot(melted_eck, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "dodgerblue") +
+  labs(x = "Variable_1", y = "Variable_2")
+
+
+
+
